@@ -13,12 +13,20 @@ const userSchema = new Schema({
   },
   email: {
     type: String,
-    required: true
+    required: true,
   },
   leaves_remaining: {
     type: Number,
     default: 15,
   },
+  profileImage: {
+    type: String,
+    required: false,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  }
 });
 
 export default mongoose.model("User", userSchema);

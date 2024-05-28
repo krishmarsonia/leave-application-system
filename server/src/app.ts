@@ -1,19 +1,60 @@
 import cors from "cors";
 import http from "http";
-import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import session from "express-session";
+import cookieParser from "cookie-parser";
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import express, { NextFunction, Request, Response } from "express";
 
 import sideFunc from "./routes/basicRoutes";
-import notifyRouter from "./routes/notifyRoutes";
 import clerkRouter from "./routes/clerkRoutes";
+import LeaveRouter from "./routes/leaveRoutes";
+import notifyRouter from "./routes/notifyRoutes";
+import { CustomError } from "./custom/CustomError";
 
 const app = express();
-app.use(cors());
+
+const whiteList = [
+  "http://localhost:5173",
+  "https://a3ef-43-254-176-117.ngrok-free.app",
+  "https://clerk.com",
+  "http://localhost:5000",
+];
+
+// app.use(cors());
+
+app.use(
+  cors({
+    credentials: true,
+    origin: (origin, callback) => {
+      if (!origin || whiteList.includes(origin!)) {
+        return callback(null, true);
+      }
+      callback(new CustomError("Not allowed by CORS", 501));
+    },
+  })
+);
 
 app.use(clerkRouter); //don't move it from here / advance => keep it before bodyParser or express.json(); because we have used bodyParser.raw() in the middleware in routes
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+//   res.header('Access-Control-Allow-Credentials', "true");
+//   next()
+// });
+
+app.use(cookieParser());
+
+app.use(
+  session({
+    secret: "XYZ",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+  })
+);
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.json());
@@ -21,8 +62,12 @@ app.use(express.json());
 // app.get("/notifyCount", (req, res, next) => {
 //   res.json("hi")
 // })
-
+app.get("/", (req, res, next) => {
+  console.log(req.ip);
+  return res.json("welcome to the Leave Management API's");
+})
 app.use(notifyRouter);
+app.use(LeaveRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.log(err);

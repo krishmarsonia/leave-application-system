@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import io from "../app";
-import Notification from "../model/notification";
+import Notification from "../model/Notification";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
 const sleep = (time: number) => {
