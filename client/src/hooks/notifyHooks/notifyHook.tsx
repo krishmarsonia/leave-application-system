@@ -10,6 +10,8 @@ const getNotifications = (userId: string) => {
       seen: boolean;
       userId: string;
       _id: string;
+      createdAt: string;
+      updatedAt: string;
     }[]
   >(`http://localhost:5000/getNotifications/${userId}`);
 };
@@ -39,7 +41,9 @@ const setNotifications = (data: {
 
 export const useSetNotifications = () => {
   const queryClient = useQueryClient();
-  return useMutation(setNotifications, {onSuccess: () => {
-    queryClient.invalidateQueries("userNotification");
-  }});
+  return useMutation(setNotifications, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("userNotification");
+    },
+  });
 };

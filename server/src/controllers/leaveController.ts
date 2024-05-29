@@ -40,7 +40,7 @@ export const postCreateLeaveController = async (
       reason,
       employeeId
     );
-    return res.json(employeeId);
+    return res.status(201).json(employeeId);
   } catch (error: any) {
     if (!error.statusCode) {
       error.statusCode = 422;

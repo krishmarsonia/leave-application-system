@@ -1,7 +1,9 @@
+import fs from "fs";
 import cors from "cors";
 import http from "http";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import schedule from "node-schedule";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import { Server, Socket } from "socket.io";
@@ -13,6 +15,12 @@ import clerkRouter from "./routes/clerkRoutes";
 import LeaveRouter from "./routes/leaveRoutes";
 import notifyRouter from "./routes/notifyRoutes";
 import { CustomError } from "./custom/CustomError";
+import { findUsers } from "./dbServices/userDbServices";
+import {
+  createPunch,
+  deletePunches,
+  getPunches,
+} from "./dbServices/punchDBServices";
 
 const app = express();
 
@@ -62,10 +70,39 @@ app.use(express.json());
 // app.get("/notifyCount", (req, res, next) => {
 //   res.json("hi")
 // })
+
+schedule.scheduleJob("00 11 * * 1-6", async () => {
+  console.log("running cron job");
+  try {
+    const users = await findUsers({ isAdmin: false });
+    const punchArr: { userId: string; date: number }[] = [];
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    const currentTime = currentDate.getTime();
+    users.map((user) => {
+      const tempPunch = { userId: user._id.toString(), date: currentTime };
+      punchArr.push(tempPunch);
+    });
+    const punches = await getPunches({ date: currentTime });
+    if (punches) {
+      await deletePunches({ date: currentTime });
+    }
+    await createPunch(punchArr);
+    console.log("cron job successFully ran");
+  } catch (error: any) {
+    const content =
+      new Date() +
+      "\r\n" +
+      (error.stack ? error.stack : error.message) +
+      "\r\n" +
+      "\r\n";
+    fs.appendFileSync(process.cwd() + "/src/logs/scheduleError.txt", content);
+  }
+});
 app.get("/", (req, res, next) => {
   console.log(req.ip);
   return res.json("welcome to the Leave Management API's");
-})
+});
 app.use(notifyRouter);
 app.use(LeaveRouter);
 

@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import { socket } from "../socket";
 // import { AxiosResponse } from "axios";
 
+import {notificationTimeCalculation} from "../../../server/src/util/timeCalculations"
+
 const Notification = ({ userId }: { userId: string }) => {
   // const location = useLocation();
   const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
@@ -98,7 +100,7 @@ const Notification = ({ userId }: { userId: string }) => {
                       {noti.message}
                     </div>
                     <div className="flex justify-end text-xs font-normal text-zurix">
-                      1 day ago
+                      {notificationTimeCalculation(noti.createdAt)}
                     </div>
                   </div>
                 </Link>
