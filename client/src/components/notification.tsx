@@ -7,7 +7,8 @@ import { Link } from "react-router-dom";
 import { socket } from "../socket";
 // import { AxiosResponse } from "axios";
 
-import {notificationTimeCalculation} from "../../../server/src/util/timeCalculations"
+import { notificationTimeCalculation } from "../../../server/src/util/timeCalculations";
+import { toast } from "react-toastify";
 
 const Notification = ({ userId }: { userId: string }) => {
   // const location = useLocation();
@@ -55,7 +56,12 @@ const Notification = ({ userId }: { userId: string }) => {
   }, [data?.data]);
 
   useEffect(() => {
-    socket.on("actionSuccess", () => {
+    socket.on("actionSuccess", (arg: { status: "accepted" | "rejected" }) => {
+      if (arg.status === "accepted") {
+        toast.success("Your leave application have been accepted");
+      } else {
+        toast.warn("Your leave application have been rejected");
+      }
       refetch();
     });
     return () => {

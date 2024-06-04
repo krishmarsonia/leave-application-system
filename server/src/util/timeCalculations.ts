@@ -1,17 +1,17 @@
 import { CustomError } from "../custom/CustomError";
 
-const oneYear = 31556952000;
-const oneMonth = 2629746000;
-const oneDay = 86400000;
-const oneHour = 3600000;
-const oneMinute = 60000;
-const oneSecond = 1000;
+export const oneYear = 31556952000;
+export const oneMonth = 2629746000;
+export const oneDay = 86400000 - 1;
+export const oneHour = 3600000;
+export const oneMinute = 60000;
+export const oneSecond = 1000;
 export const timeCalculations = (start: number, end: number) => {
   if (start > end) {
     throw new CustomError("start time is more than end time", 422);
   }
   const gap = end - start;
-  if (gap === 0) {
+  if (gap === oneDay) {
     return "1 day";
   } else if (gap < oneDay) {
     const temp = Math.floor(gap / oneHour);

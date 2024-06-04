@@ -52,10 +52,12 @@ export const findUsers = async (query?: {
   isAdmin?: boolean;
 }) => {
   try {
-    if (!query) {
-      throw new CustomError("no query was present in parameters", 422);
+    let users;
+    if(query){
+      users = await User.find(query);
+    }else{
+      users = await User.find();
     }
-    const users = await User.find(query);
     return users;
   } catch (error: any) {
     if (!error.statusCode) {

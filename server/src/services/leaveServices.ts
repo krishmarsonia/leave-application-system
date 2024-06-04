@@ -10,6 +10,7 @@ import { LeaveInterface } from "../types/Leave";
 import { ExternalError } from "../types/externalError";
 import { timeCalculations } from "../util/timeCalculations";
 import io from "../app";
+import { leaveCalculation } from "../util/leaveCalculation";
 
 export const postCreateLeaveServices = async (
   startDate: number,
@@ -139,6 +140,13 @@ export const postActionOnLeaveServices = async (
     if (!employeeUser) {
       throw new CustomError("User not found", 404);
     }
+    if (approve === true) {
+      const leavesCalc = leaveCalculation(leave.startDate, leave.endDate);
+      employeeUser.leaves_remaining =
+        employeeUser.leaves_remaining - leavesCalc;
+      await employeeUser.save();
+    }
+
     await createNotification({
       userId: employeeUser._id.toString(),
       message: approve
@@ -151,6 +159,9 @@ export const postActionOnLeaveServices = async (
             leave.endDate
           )} has been rejcted ${admin?.name}`,
       route: "/userLeaves",
+    });
+    io.to(employeeUser.externalId).emit("actionSuccess", {
+      status: approve ? "accepted": "rejected",
     });
     return employeeUser;
   } catch (error: any) {

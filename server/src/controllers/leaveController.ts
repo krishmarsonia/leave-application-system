@@ -114,9 +114,9 @@ export const postActionOnLeaveController = async (
       throw new CustomError("result not returened", 422);
     }
     console.log("success");
-    io.to(result.externalId).emit("actionSuccess", {
-      status: "success",
-    });
+    // io.to(result.externalId).emit("actionSuccess", {
+    //   status: "success",
+    // });
     return res.json(result);
   } catch (error: any) {
     if (!error.statusCode) {

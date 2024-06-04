@@ -12,6 +12,7 @@ import LocationHistoryState from "../context/locationHistory/locationHistoryStat
 import { useEffect } from "react";
 import { ErrorBoundary } from "../ErrorBoundary";
 import Notification from "../components/notification";
+import { Bounce, ToastContainer } from "react-toastify";
 // import { io } from "socket.io-client";
 // import { useContext } from "react";
 // import { useContext } from "react";
@@ -101,6 +102,19 @@ export default function RootLayout() {
         <main className="mt-16 mx-36">
           <ErrorBoundary>
             <Outlet />
+            <ToastContainer
+              position="top-right"
+              autoClose={2700}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss={false}
+              draggable
+              pauseOnHover={false}
+              theme="colored"
+              transition={Bounce}
+            />
           </ErrorBoundary>
         </main>
       </LocationHistoryState>

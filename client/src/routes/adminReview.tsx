@@ -21,26 +21,26 @@ const AdminReview = () => {
         const tempStartDate = new Date(leave.startDate);
         const tempEndDate = new Date(leave.endDate);
         const tempCreatedAt = new Date(leave.createdAt);
-        const startTime = tempStartDate.getUTCHours() + ":00";
-        const endTime = tempEndDate.getUTCHours() + ":00";
+        const startTime = tempStartDate.getHours() + ":00";
+        const endTime = tempEndDate.getHours() + ":00";
         const startDate =
-          tempStartDate.getUTCDate() +
+          tempStartDate.getDate() +
           "/" +
-          tempStartDate.getUTCMonth() +
+          tempStartDate.getMonth() +
           "/" +
-          tempStartDate.getUTCFullYear();
+          tempStartDate.getFullYear();
         const endDate =
-          tempEndDate.getUTCDate() +
+          tempEndDate.getDate() +
           "/" +
-          tempEndDate.getUTCMonth() +
+          tempEndDate.getMonth() +
           "/" +
-          tempEndDate.getUTCFullYear();
+          tempEndDate.getFullYear();
         const appliedOn =
-          tempCreatedAt.getUTCDate() +
+          tempCreatedAt.getDate() +
           "/" +
-          tempCreatedAt.getUTCMonth() +
+          tempCreatedAt.getMonth() +
           "/" +
-          tempCreatedAt.getUTCFullYear();
+          tempCreatedAt.getFullYear();
         return (
           <div className="flex border my-3 bg-baylor shadow-sm rounded-md mx-auto">
             <div className="w-3/12 flex justify-center items-center flex-col">

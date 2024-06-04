@@ -6,20 +6,20 @@ const punchSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true
+  },
+  punchCount: {
+    type: Number,
+    required: true,
+    default: 0,
   },
   punchInTime: {
     type: Number,
-    required: false,
-    default: 0,
+    required: true,
   },
   punchOutTime: {
     type: Number,
-    required: false,
     default: 0,
-  },
-  date: {
-    type: Number,
-    required: true,
   },
 });
 

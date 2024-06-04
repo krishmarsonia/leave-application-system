@@ -8,11 +8,16 @@ const punchHistory = new Schema({
     ref: "User",
     required: true,
   },
-  punchIn: {
+  punchCount: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  punchInTime: {
     type: Number,
     required: true,
   },
-  punchOut: {
+  punchOutTime: {
     type: Number,
     required: true,
   },
@@ -20,6 +25,10 @@ const punchHistory = new Schema({
     type: Boolean,
     default: false,
   },
+  date: {
+    type: Number,
+    required: true
+  }
 });
 
-export default mongoose.model("punchHistory", punchHistory);
+export default mongoose.model("punch-History", punchHistory);

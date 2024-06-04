@@ -11,8 +11,10 @@ import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import express, { NextFunction, Request, Response } from "express";
 
 import sideFunc from "./routes/basicRoutes";
+import testRoutes from "./routes/testRoutes";
 import clerkRouter from "./routes/clerkRoutes";
 import LeaveRouter from "./routes/leaveRoutes";
+import punchRouter from "./routes/punchRoutes";
 import notifyRouter from "./routes/notifyRoutes";
 import { CustomError } from "./custom/CustomError";
 import { findUsers } from "./dbServices/userDbServices";
@@ -21,6 +23,8 @@ import {
   deletePunches,
   getPunches,
 } from "./dbServices/punchDBServices";
+import { createPunchHistory } from "./dbServices/punchHistoryDBServices";
+import { findLeave } from "./dbServices/leaveDBServices";
 
 const app = express();
 
@@ -71,25 +75,82 @@ app.use(express.json());
 //   res.json("hi")
 // })
 
-schedule.scheduleJob("00 11 * * 1-6", async () => {
+schedule.scheduleJob("04 11 * * 1-6", async () => {
   console.log("running cron job");
   try {
-    const users = await findUsers({ isAdmin: false });
-    const punchArr: { userId: string; date: number }[] = [];
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    const currentTime = currentDate.getTime();
-    users.map((user) => {
-      const tempPunch = { userId: user._id.toString(), date: currentTime };
-      punchArr.push(tempPunch);
+    let users = await findUsers();
+    const punches = await getPunches({});
+    const tempEndPunchTime = new Date();
+    const punchTransferDate = new Date();
+    punchTransferDate.setHours(12, 0, 0, 0);
+    tempEndPunchTime.setHours(18, 0, 0, 0);
+    let tempPunchCount = 0;
+    let punchesTransfer: {
+      userId: string;
+      punchInTime: number;
+      punchOutTime: number;
+      isOnLeave: boolean;
+      date: number;
+      punchCount: number
+    }[] = [];
+    punches.map(async (pun) => {
+      tempPunchCount = pun.punchCount
+      users = users.filter(
+        (user) => user._id.toString() !== pun.userId?.toString()
+      );
+      // if (pun.punchOutTime === 0) {
+      //   pun.punchOutTime = tempEndPunchTime.getTime();
+      //   await pun.save();
+      // }
+      punchesTransfer.push({
+        userId: pun.userId?.toString()!,
+        punchInTime: pun.punchInTime,
+        punchOutTime: pun.punchOutTime,
+        isOnLeave: false,
+        date: punchTransferDate.getTime(),
+        punchCount: pun.punchCount
+      });
     });
-    const punches = await getPunches({ date: currentTime });
-    if (punches) {
-      await deletePunches({ date: currentTime });
-    }
-    await createPunch(punchArr);
-    console.log("cron job successFully ran");
+    await createPunchHistory(punchesTransfer);
+    punchesTransfer = [];
+    console.log(109, users);
+    await Promise.all(
+      users.map(async (user) => {
+        const leaveResult = await findLeave({
+          employeeId: user._id.toString(),
+          leaveType: { $in: ["fullDay", "SeveralDays"] },
+          startDate: { $lt: punchTransferDate.getTime() },
+          endDate: { $gt: punchTransferDate.getTime() },
+        });
+        console.log(leaveResult);
+        if (leaveResult) {
+          punchesTransfer.push({
+            userId: user._id.toString(),
+            date: punchTransferDate.getTime(),
+            isOnLeave: true,
+            punchInTime: 0,
+            punchOutTime: 0,
+            punchCount: tempPunchCount + 1
+          });
+        } else {
+          console.log("127, running");
+          punchesTransfer.push({
+            userId: user._id.toString(),
+            date: punchTransferDate.getTime(),
+            isOnLeave: false,
+            punchInTime: 0,
+            punchOutTime: 0,
+            punchCount: tempPunchCount + 1
+          });
+        }
+        tempPunchCount++;
+      })
+    );
+    //134 is running first before the array
+    console.log(134, punchesTransfer);
+    await createPunchHistory(punchesTransfer);
   } catch (error: any) {
+    console.log(error);
     const content =
       new Date() +
       "\r\n" +
@@ -105,11 +166,13 @@ app.get("/", (req, res, next) => {
 });
 app.use(notifyRouter);
 app.use(LeaveRouter);
+app.use(testRoutes);
+app.use(punchRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.log(err);
   console.log(err.message);
-  res.status(err.statusCode).json({ message: err.message });
+  res.status(err.statusCode).send({ message: err.message });
 });
 const server = http.createServer(app);
 const io = new Server(server, {

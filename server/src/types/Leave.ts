@@ -1,8 +1,8 @@
 export interface LeaveInterface {
   employeeId: string;
-  leaveType: "selectedHours" | "fullDay" | "SeveralDays";
-  startDate: number;
-  endDate: number;
+  leaveType: "selectedHours" | "fullDay" | "SeveralDays" | {};
+  startDate: number | {};
+  endDate: number | {};
   dateActioned?: string;
   approvedBy?: string;
   approved?: boolean;
