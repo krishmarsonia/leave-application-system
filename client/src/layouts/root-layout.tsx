@@ -104,14 +104,14 @@ export default function RootLayout() {
             <Outlet />
             <ToastContainer
               position="top-right"
-              autoClose={2700}
+              autoClose={3000}
               hideProgressBar={false}
               newestOnTop
               closeOnClick
               rtl={false}
               pauseOnFocusLoss={false}
               draggable
-              pauseOnHover={false}
+              pauseOnHover={true}
               theme="colored"
               transition={Bounce}
             />

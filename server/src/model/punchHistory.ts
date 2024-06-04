@@ -8,11 +8,6 @@ const punchHistory = new Schema({
     ref: "User",
     required: true,
   },
-  punchCount: {
-    type: Number,
-    required: true,
-    default: 0
-  },
   punchInTime: {
     type: Number,
     required: true,

@@ -6,13 +6,11 @@ export const createPunch = async (
     | {
         userId: string;
         punchInTime: number;
-        punchCount: number;
         punchOutTime?: number;
       }
     | {
         userId: string;
         punchInTime: number;
-        punchCount: number;
         punchOutTime?: number;
       }[]
 ) => {
@@ -41,14 +39,12 @@ export const getPunches = async ({
     userId?: string;
     punchInTime?: number;
     punchOutTime?: number;
-    punchCount?: number;
     _id?: string;
   };
   sort?: {
     userId?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     punchInTime?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     punchOutTime?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
-    punchCount?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     _id?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
   };
   skip?: number;

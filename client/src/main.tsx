@@ -21,6 +21,7 @@ import DashboardLayout from "./layouts/dash-layout.tsx";
 import "./index.css";
 import "react-toastify/ReactToastify.css";
 import PunchesDisplay from "./routes/punchesDisplay.tsx";
+import WeeklyPunches from "./routes/weeklyPunches.tsx";
 
 const queryClient = new QueryClient();
 
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
           { path: "/requestLeave", element: <RequestLeave /> },
           { path: "/userLeaves", element: <UserLeaves /> },
           { path: "/successLeave", element: <SuccessLeave /> },
-          { path: "/punchesDisplay", element: <PunchesDisplay /> },
+
           {
             element: <AdminLayout />,
             children: [
@@ -57,6 +58,8 @@ const router = createBrowserRouter([
                 path: "/adminReview",
                 element: <AdminReview />,
               },
+              { path: "/punchesDisplay", element: <PunchesDisplay /> },
+              { path: "/weeklyPunches", element: <WeeklyPunches /> },
             ],
           },
         ],

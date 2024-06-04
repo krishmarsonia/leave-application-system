@@ -36,7 +36,6 @@ const getPunchDisplay = ({ pageParam }: { pageParam: number }) => {
         profileImage: string;
         _id: string;
       };
-      punchCount: number;
       punchInTime: number;
       punchOutTime: number;
       _id: string;

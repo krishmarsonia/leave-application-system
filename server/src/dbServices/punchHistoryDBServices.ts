@@ -9,7 +9,6 @@ export const createPunchHistory = async (
         punchOutTime: number;
         isOnLeave: boolean;
         date: number;
-        punchCount: number;
       }
     | {
         userId: string;
@@ -17,7 +16,6 @@ export const createPunchHistory = async (
         punchOutTime: number;
         isOnLeave: boolean;
         date: number;
-        punchCount: number;
       }[]
 ) => {
   try {
@@ -44,14 +42,12 @@ export const findOnePunchHistory = async ({
     punchOutTime: number;
     isOnLeave: boolean;
     date: number;
-    punchCount: number;
   };
   sort?: {
     userId?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     punchInTime?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     punchOutTime?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     date?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
-    punchCount?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     _id?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
   };
 }) => {
@@ -80,14 +76,12 @@ export const findPunchHistories = async ({
     punchOutTime: number;
     isOnLeave: boolean;
     date: number;
-    punchCount: number;
   };
   sort?: {
     userId?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     punchInTime?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     punchOutTime?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     date?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
-    punchCount?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
     _id?: 1 | -1 | "ascending" | "asc" | "descending" | "desc";
   };
   select?: {
@@ -95,7 +89,6 @@ export const findPunchHistories = async ({
     punchInTime?: 1 | 0;
     punchOutTime?: 1 | 0;
     date?: 1 | 0;
-    punchCount?: 1 | 0;
     _id?: 1 | 0;
     isOnLeave?: 1 | 0;
   };

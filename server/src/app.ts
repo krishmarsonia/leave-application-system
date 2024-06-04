@@ -91,10 +91,8 @@ schedule.scheduleJob("04 11 * * 1-6", async () => {
       punchOutTime: number;
       isOnLeave: boolean;
       date: number;
-      punchCount: number
     }[] = [];
     punches.map(async (pun) => {
-      tempPunchCount = pun.punchCount
       users = users.filter(
         (user) => user._id.toString() !== pun.userId?.toString()
       );
@@ -108,7 +106,6 @@ schedule.scheduleJob("04 11 * * 1-6", async () => {
         punchOutTime: pun.punchOutTime,
         isOnLeave: false,
         date: punchTransferDate.getTime(),
-        punchCount: pun.punchCount
       });
     });
     await createPunchHistory(punchesTransfer);
@@ -130,7 +127,6 @@ schedule.scheduleJob("04 11 * * 1-6", async () => {
             isOnLeave: true,
             punchInTime: 0,
             punchOutTime: 0,
-            punchCount: tempPunchCount + 1
           });
         } else {
           console.log("127, running");
@@ -140,15 +136,14 @@ schedule.scheduleJob("04 11 * * 1-6", async () => {
             isOnLeave: false,
             punchInTime: 0,
             punchOutTime: 0,
-            punchCount: tempPunchCount + 1
           });
         }
         tempPunchCount++;
       })
     );
-    //134 is running first before the array
     console.log(134, punchesTransfer);
     await createPunchHistory(punchesTransfer);
+    await deletePunches(true)
   } catch (error: any) {
     console.log(error);
     const content =

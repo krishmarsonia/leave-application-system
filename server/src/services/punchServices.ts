@@ -20,43 +20,52 @@ export const punchServices = async (
       if (!user) {
         throw new CustomError("no user found with this ID", 404);
       }
-      const allLeaves = await getPunches({ sort: { punchCount: -1 } });
-      const leave = allLeaves.find(
-        (al) => al.userId?.toString() === user._id.toString()
-      );
+      const punches = await getPunches({
+        query: { userId: user._id.toString() },
+      });
+      // const leave = allLeaves.find(
+      //   (al) => al.userId?.toString() === user._id.toString()
+      // );
       if (mode === "punch-in") {
-        if (leave) {
-          throw new CustomError("punch-in of this day is already done.", 422);
-        }
-        if (allLeaves.length !== 0) {
+        //if punch hoi to e jova nu ke ani phela ekai ma punch out ma zero nathi ne
+        if (punches.length < 3) {
+          const didntPunchedOut = punches.find((ps) => ps.punchOutTime === 0);
+          if (didntPunchedOut) {
+            throw new CustomError(
+              "You haven't punch-out in the last punch please punch-out first to punch-in.",
+              422
+            );
+          }
           await createPunch({
             userId: user._id.toString(),
             punchInTime: Date.now(),
-            punchCount: allLeaves[0].punchCount + 1,
           });
+          return "Noted! you are punched-in. You may start your work.";
         } else {
-          const historyLeave = await findOnePunchHistory({
-            sort: { punchCount: -1 },
-          });
-          await createPunch({
-            userId: user._id.toString(),
-            punchInTime: Date.now(),
-            punchCount: historyLeave ? historyLeave.punchCount + 1 : 1,
-          });
+          throw new CustomError(
+            "You have already punched-out 3 times. You are not allowed to punch more than 3 times in a day",
+            422
+          );
         }
-        return "Noted! you are punched-in. You may start your work.";
       } else {
-        if (!leave) {
+        if (punches.length === 0) {
           throw new CustomError("no punch found with this punchId", 422);
         }
-        if (!leave.punchInTime) {
+        const punchedInPunch = punches.find((ps) => ps.punchOutTime === 0);
+        if (!punchedInPunch) {
+          throw new CustomError(
+            "You have already punched-out or you didn't punched-in in the first place.",
+            422
+          );
+        }
+        if (!punchedInPunch.punchInTime || punchedInPunch.punchInTime === 0) {
           throw new CustomError("please first punch-in to punch-out", 422);
         }
-        if (leave.punchOutTime && leave.punchOutTime !== 0) {
+        if (punchedInPunch.punchOutTime !== 0) {
           throw new CustomError("you already punched-out!", 422);
         }
-        leave.punchOutTime = Date.now();
-        await leave.save();
+        punchedInPunch.punchOutTime = Date.now();
+        await punchedInPunch.save();
         return "Noted! you are punched-out. You can enjoy rest of the day.";
       }
     } else {
@@ -78,12 +87,12 @@ export const punchDisplayServices = async (pageParams: number) => {
       sort: { _id: "asc" },
       limit: numberOfData,
       skip: pageParams,
-      populate: "userId"
+      populate: "userId",
     });
     data.map((da) => {
-      da.set("isOnLeave", false, {strict: false});
-      return da
-    })
+      da.set("isOnLeave", false, { strict: false });
+      return da;
+    });
     if (data.length < numberOfData) {
       const historyData = await findPunchHistories({
         sort: { _id: "asc" },
@@ -91,13 +100,12 @@ export const punchDisplayServices = async (pageParams: number) => {
         skip: 0,
         select: {
           _id: 1,
-          punchCount: 1,
           punchInTime: 1,
           punchOutTime: 1,
           userId: 1,
-          isOnLeave: 1
+          isOnLeave: 1,
         },
-        populate: "userId"
+        populate: "userId",
       });
       // const historyData = temphistoryData.map((thd) => {
       //   return {
@@ -127,11 +135,10 @@ export const punchDisplayServices = async (pageParams: number) => {
       skip: pageParams - 10000000,
       select: {
         _id: 1,
-        punchCount: 1,
         punchInTime: 1,
         punchOutTime: 1,
       },
-      populate: "userId"
+      populate: "userId",
     });
     return {
       data,
