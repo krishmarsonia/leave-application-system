@@ -1,14 +1,15 @@
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { IoMdNotifications } from "react-icons/io";
 import { useEffect, useRef, useState } from "react";
+import { socket } from "../socket";
 import {
   useGetNotifications,
   useSetNotifications,
 } from "../hooks/notifyHooks/notifyHook";
-import { Link } from "react-router-dom";
-import { socket } from "../socket";
 // import { AxiosResponse } from "axios";
 
 import { notificationTimeCalculation } from "../../../server/src/util/timeCalculations";
-import { toast } from "react-toastify";
 
 const Notification = ({ userId }: { userId: string }) => {
   // const location = useLocation();
@@ -82,10 +83,10 @@ const Notification = ({ userId }: { userId: string }) => {
   return (
     <div ref={refs}>
       <div
-        className="hover:cursor-pointer"
+        className="hover:cursor-pointer mt-0.5"
         onClick={() => setNotificationOpen(!notificationOpen)}
       >
-        <h1>Notification</h1>
+        <IoMdNotifications size={25}/>
         <NotificationCount data={data?.data} />
       </div>
       {notificationOpen ? (

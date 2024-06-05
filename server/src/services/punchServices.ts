@@ -8,7 +8,7 @@ import {
   findOnePunchHistory,
   findPunchHistories,
 } from "../dbServices/punchHistoryDBServices";
-import { findOneUser } from "../dbServices/userDbServices";
+import { findOneUser, findUsers } from "../dbServices/userDbServices";
 
 export const punchServices = async (
   mode: "punch-in" | "punch-out",
@@ -91,6 +91,7 @@ export const punchDisplayServices = async (pageParams: number) => {
     });
     data.map((da) => {
       da.set("isOnLeave", false, { strict: false });
+      da.set("date", Date.now(), { strict: false });
       return da;
     });
     if (data.length < numberOfData) {
@@ -104,6 +105,7 @@ export const punchDisplayServices = async (pageParams: number) => {
           punchOutTime: 1,
           userId: 1,
           isOnLeave: 1,
+          date: 1,
         },
         populate: "userId",
       });
@@ -145,5 +147,61 @@ export const punchDisplayServices = async (pageParams: number) => {
       currentPage: pageParams,
       nextPage: data.length !== 0 ? pageParams + numberOfData : null,
     };
+  }
+};
+
+export const weeklyPunchServices = async (
+  weekStart: number,
+  weekEnd: number
+) => {
+  try {
+    const punchHistories = await findPunchHistories({
+      gte: weekStart,
+      lte: weekEnd,
+      gteWhere: "punchInTime",
+      lteWhere: "punchOutTime",
+    });
+    const users = await findUsers();
+    const finalArr: {
+      userId: string;
+      userName: string;
+      leaveDays: number;
+      workHours: number;
+    }[] = [];
+    users.map((user) => {
+      let leaveCount = 0;
+      let totalHours = 0;
+      // const userPunchHistories = punchHistories.filter(
+      //   (ph) => ph.userId.toString() === user._id.toString()
+      // );
+      punchHistories.map((uph) => {
+        if (uph.userId.toString() === user._id.toString()) {
+          if (uph.isOnLeave === true) {
+            leaveCount++;
+          } else {
+            const timeDifference = uph.punchOutTime - uph.punchInTime;
+            console.log(uph._id);
+            if (timeDifference > 0) {
+              const hours = timeDifference / 3600000;
+              totalHours = totalHours + hours;
+            }
+          }
+        }
+      });
+      if (!(totalHours === 0 && leaveCount === 0)) {
+        finalArr.push({
+          userId: user._id.toString(),
+          userName: user.name,
+          leaveDays: leaveCount,
+          workHours: Math.ceil(totalHours),
+        });
+      }
+    });
+    return finalArr;
+  } catch (error: any) {
+    if (!error.statusCode) {
+      error.statusCode = 422;
+    }
+    throw error;
   }
 };

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 const putUpdatePunch = (data: {
   userId?: string;
@@ -38,6 +38,8 @@ const getPunchDisplay = ({ pageParam }: { pageParam: number }) => {
       };
       punchInTime: number;
       punchOutTime: number;
+      date: number;
+      isOnLeave: boolean;
       _id: string;
     }[];
     currentPage: number;
@@ -51,5 +53,21 @@ export const usePunchDisplay = () => {
     queryFn: getPunchDisplay,
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.data.nextPage,
+  });
+};
+
+export const weeklyPunch = (weekStart: number, weekEnd: number) => {
+  return axios.get<
+    { userId: string; userName: string; leaveDays: number; workHours: number }[]
+  >(
+    `http://localhost:5000/weeklyPunch?weekStart=${weekStart}&weekEnd=${weekEnd}`
+  );
+};
+
+export const useWeeklyPunch = (weekStart: number, weekEnd: number) => {
+  return useQuery({
+    queryKey: ["weeklyPunches"],
+    queryFn: () => weeklyPunch(weekStart, weekEnd),
+    refetchOnWindowFocus: false,
   });
 };

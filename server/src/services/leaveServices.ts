@@ -34,7 +34,7 @@ export const postCreateLeaveServices = async (
       reason: reason,
       startDate: startDate,
     });
-    const admins = await findUsers({ isAdmin: true });
+    const admins = await findUsers({ query: { isAdmin: true } });
     const notifications: { userId: string; message: string; route: string }[] =
       [];
     admins.map((admin) => {
@@ -161,7 +161,7 @@ export const postActionOnLeaveServices = async (
       route: "/userLeaves",
     });
     io.to(employeeUser.externalId).emit("actionSuccess", {
-      status: approve ? "accepted": "rejected",
+      status: approve ? "accepted" : "rejected",
     });
     return employeeUser;
   } catch (error: any) {

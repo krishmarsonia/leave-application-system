@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { clerkWebHook } from "../controllers/clerkController";
+import { clerkWebHook, getTodaysBirthdayController } from "../controllers/clerkController";
 import bodyParser from "body-parser";
 
 const router = Router();
@@ -10,4 +10,5 @@ router.post(
   clerkWebHook
 );
 
+router.get("/getTodaysBirthday", getTodaysBirthdayController);
 export default router;

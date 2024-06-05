@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { CustomError } from "../custom/CustomError";
-import { punchDisplayServices, punchServices } from "../services/punchServices";
+import {
+  punchDisplayServices,
+  punchServices,
+  weeklyPunchServices,
+} from "../services/punchServices";
 
 export const punchController = async (
   req: Request,
@@ -43,6 +47,33 @@ export const punchDisplayController = async (
     const numPageParams = Number(page);
     const data = await punchDisplayServices(numPageParams);
     return res.json(data);
+  } catch (error: any) {
+    if (!error.statusCode) {
+      error.statusCode = 422;
+    }
+    return next(error);
+  }
+};
+
+export const weeklyPunchController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { weekStart, weekEnd } = req.query;
+
+    if (!weekStart || !weekEnd) {
+      throw new CustomError("params in query not provided", 422);
+    }
+    const numWeekStart = Number(weekStart);
+    const numWeekEnd = Number(weekEnd);
+    if (Number.isNaN(numWeekEnd) || Number.isNaN(numWeekStart)) {
+      throw new CustomError("params are not of number", 422);
+    }
+    const result = await weeklyPunchServices(numWeekStart, numWeekEnd);
+    console.log(result);
+    res.json(result);
   } catch (error: any) {
     if (!error.statusCode) {
       error.statusCode = 422;

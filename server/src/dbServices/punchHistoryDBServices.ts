@@ -69,6 +69,10 @@ export const findPunchHistories = async ({
   skip,
   select,
   populate,
+  gte,
+  lte,
+  gteWhere,
+  lteWhere
 }: {
   query?: {
     userId: string;
@@ -95,6 +99,10 @@ export const findPunchHistories = async ({
   limit?: number;
   skip?: number;
   populate?: [string] | string;
+  gte?: number;
+  lte?: number
+  gteWhere?: string;
+  lteWhere? : string;
 }) => {
   try {
     let data;
@@ -116,6 +124,12 @@ export const findPunchHistories = async ({
     data = PunchHistory.find();
     if (query) {
       data = PunchHistory.find(query);
+    }
+    if(gte && gteWhere){
+      data = data.where(gteWhere).gte(gte);
+    }
+    if(lte && lteWhere){
+      data = data.where(lteWhere).lte(lte);
     }
     if (sort) {
       data = data.sort(sort);

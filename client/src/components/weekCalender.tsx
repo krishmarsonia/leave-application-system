@@ -6,20 +6,21 @@ import "../styles/weekCalender.css";
 const WeekCalender = (props: {
   weekObj: {
     date: Date;
-    dateFrom: null | string;
-    dateEnd: null | string;
+    dateFrom: number;
+    dateEnd: number;
   };
-  changeHandler: (date: Date) => void;
+  changeHandler: (date: Date | null) => void;
 }) => {
-  const { weekObj } = props;
+  const { weekObj, changeHandler } = props;
   return (
-    <div >
+    <div>
       <DatePicker
         isoWeek
         shouldDisableDate={(date) => {
           return Date.now() < date.getTime() ? true : false;
         }}
         value={weekObj.date}
+        onChange={changeHandler}
       />
     </div>
   );
