@@ -1,6 +1,6 @@
 import axios from "axios";
 import { LeaveInterface } from "../../../../server/src/types/Leave";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Leaves } from "../../types/Leaves";
 
 const postCreateLeave = (data: LeaveInterface) => {
@@ -9,9 +9,10 @@ const postCreateLeave = (data: LeaveInterface) => {
 
 export const usePostCreateLeave = () => {
   const queryClient = useQueryClient();
-  return useMutation(postCreateLeave, {
+  return useMutation({
+    mutationFn: postCreateLeave,
     onSuccess: (data) => {
-      queryClient.invalidateQueries(["userLeaves", data.data]);
+      queryClient.invalidateQueries({ queryKey: ["userLeaves", data.data] });
     },
   });
 };
@@ -23,7 +24,9 @@ const getLeaves = (userId: string) => {
 };
 
 export const useGetLeaves = (userId: string) => {
-  return useQuery(["userLeaves", userId], () => getLeaves(userId), {
+  return useQuery({
+    queryKey: ["userLeaves", userId],
+    queryFn: () => getLeaves(userId),
     refetchOnWindowFocus: false,
   });
 };
@@ -33,7 +36,9 @@ const getAllLeavesList = () => {
 };
 
 export const useGetAllLeaves = () => {
-  return useQuery("allLeaves", () => getAllLeavesList(), {
+  return useQuery({
+    queryKey: ["allLeaves"],
+    queryFn: () => getAllLeavesList(),
     refetchOnWindowFocus: true,
   });
 };
@@ -52,9 +57,10 @@ const postActionOnLeave = (data: {
 
 export const usePostActionOnLeave = () => {
   const queryClient = useQueryClient();
-  return useMutation(postActionOnLeave, {
+  return useMutation({
+    mutationFn: postActionOnLeave,
     onSuccess: () => {
-      queryClient.invalidateQueries("allLeaves");
+      queryClient.invalidateQueries({queryKey: ["allLeaves"]});
     },
   });
 };

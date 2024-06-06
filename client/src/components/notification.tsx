@@ -1,11 +1,15 @@
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { IoMdNotifications } from "react-icons/io";
 import { useEffect, useRef, useState } from "react";
+import { socket } from "../socket";
 import {
   useGetNotifications,
   useSetNotifications,
 } from "../hooks/notifyHooks/notifyHook";
-import { Link } from "react-router-dom";
-import { socket } from "../socket";
 // import { AxiosResponse } from "axios";
+
+import { notificationTimeCalculation } from "../../../server/src/util/timeCalculations";
 
 const Notification = ({ userId }: { userId: string }) => {
   // const location = useLocation();
@@ -53,7 +57,12 @@ const Notification = ({ userId }: { userId: string }) => {
   }, [data?.data]);
 
   useEffect(() => {
-    socket.on("actionSuccess", () => {
+    socket.on("actionSuccess", (arg: { status: "accepted" | "rejected" }) => {
+      if (arg.status === "accepted") {
+        toast.success("Your leave application have been accepted");
+      } else {
+        toast.warn("Your leave application have been rejected");
+      }
       refetch();
     });
     return () => {
@@ -74,10 +83,10 @@ const Notification = ({ userId }: { userId: string }) => {
   return (
     <div ref={refs}>
       <div
-        className="hover:cursor-pointer"
+        className="hover:cursor-pointer mt-0.5"
         onClick={() => setNotificationOpen(!notificationOpen)}
       >
-        <h1>Notification</h1>
+        <IoMdNotifications size={25}/>
         <NotificationCount data={data?.data} />
       </div>
       {notificationOpen ? (
@@ -98,7 +107,7 @@ const Notification = ({ userId }: { userId: string }) => {
                       {noti.message}
                     </div>
                     <div className="flex justify-end text-xs font-normal text-zurix">
-                      1 day ago
+                      {notificationTimeCalculation(noti.createdAt)}
                     </div>
                   </div>
                 </Link>

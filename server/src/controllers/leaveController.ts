@@ -40,7 +40,7 @@ export const postCreateLeaveController = async (
       reason,
       employeeId
     );
-    return res.json(employeeId);
+    return res.status(201).json(employeeId);
   } catch (error: any) {
     if (!error.statusCode) {
       error.statusCode = 422;
@@ -114,9 +114,9 @@ export const postActionOnLeaveController = async (
       throw new CustomError("result not returened", 422);
     }
     console.log("success");
-    io.to(result.externalId).emit("actionSuccess", {
-      status: "success",
-    });
+    // io.to(result.externalId).emit("actionSuccess", {
+    //   status: "success",
+    // });
     return res.json(result);
   } catch (error: any) {
     if (!error.statusCode) {

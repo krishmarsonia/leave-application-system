@@ -60,19 +60,19 @@ const SubUserLeaves = (props: { userId: string }) => {
             const tempStartTime = new Date(leave.startDate);
             const tempEndTime = new Date(leave.endDate);
             const startDate =
-              tempStartDate.getUTCDate() +
+              tempStartDate.getDate() +
               "/" +
-              tempStartDate.getUTCMonth() +
+              tempStartDate.getMonth() +
               "/" +
-              tempStartDate.getUTCFullYear();
+              tempStartDate.getFullYear();
             const endDate =
-              tempEndDate.getUTCDate() +
+              tempEndDate.getDate() +
               "/" +
-              tempEndDate.getUTCMonth() +
+              tempEndDate.getMonth() +
               "/" +
-              tempEndDate.getUTCFullYear();
-            const startTime = tempStartTime.getUTCHours() + ":00";
-            const endTime = tempEndTime.getUTCHours() + ":00";
+              tempEndDate.getFullYear();
+            const startTime = tempStartTime.getHours() + ":00";
+            const endTime = tempEndTime.getHours() + ":00";
             return (
               <tr key={leave._id}>
                 <td className="p-5 border text-center bg-baylor">

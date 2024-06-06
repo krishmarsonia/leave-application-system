@@ -11,13 +11,13 @@ const RequestLeave = () => {
     throw new Error("user not signed in");
   }
   const currentDate = new Date();
-  const currentMonth = currentDate.getUTCMonth() + 1;
+  const currentMonth = currentDate.getMonth() + 1;
   const currentFormatedDate =
-    currentDate.getUTCFullYear() +
+    currentDate.getFullYear() +
     "-" +
     (currentMonth < 9 ? "0" + currentMonth : currentMonth) +
     "-" +
-    currentDate.getUTCDate();
+    currentDate.getDate();
   const [selectedType, setSelectedType] = useState<
     "selectedHours" | "fullDay" | "SeveralDays"
   >("fullDay");
@@ -36,23 +36,27 @@ const RequestLeave = () => {
       if (Number(fromTime.split(":")[0]) > Number(endTime.split(":")[0]))
         isError = true;
       const newStartDate = new Date(fromDate);
-      newStartDate.setUTCHours(Number(fromTime.split(":")[0]), 0, 0);
+      newStartDate.setHours(Number(fromTime.split(":")[0]), 0, 0);
       const newEndDate = new Date(fromDate);
-      newEndDate.setUTCHours(Number(endTime.split(":")[0]), 0, 0);
+      newEndDate.setHours(Number(endTime.split(":")[0]), 0, 0);
       startMilliSec = newStartDate.getTime();
       endMilliSec = newEndDate.getTime();
     } else if (selectedType === "fullDay") {
       const newStartDate = new Date(fromDate);
       const newEndDate = new Date(fromDate);
+      newStartDate.setHours(0, 0, 0, 0);
+      newEndDate.setHours(23, 59, 59, 999);
       startMilliSec = newStartDate.getTime();
       endMilliSec = newEndDate.getTime();
     } else {
       const newStartDate = new Date(fromDate);
       const newEndDate = new Date(endDate);
+      newStartDate.setHours(0, 0, 0, 0);
+      newEndDate.setHours(23, 59, 59, 999);
       startMilliSec = newStartDate.getTime();
       endMilliSec = newEndDate.getTime();
-      if (startMilliSec > endMilliSec) isError = true;
     }
+    if (startMilliSec > endMilliSec) isError = true;
     if (isError === false) {
       mutate(
         {
@@ -101,7 +105,7 @@ const RequestLeave = () => {
               : `text-mavrick`
           }`}
         >
-          Selected Hours
+          Full Day
         </CustomButton>
         <CustomButton
           custom={true}
@@ -112,7 +116,7 @@ const RequestLeave = () => {
               : `text-mavrick`
           }`}
         >
-          Selected Hours
+          Several Days
         </CustomButton>
       </div>
 
@@ -139,7 +143,7 @@ const RequestLeave = () => {
               className="border border-black h-8 w-36 mt-1 px-1"
               min={currentFormatedDate}
               value={selectedType !== "SeveralDays" ? fromDate : endDate}
-              disabled={selectedType === "fullDay"}
+              disabled={selectedType !== "SeveralDays"}
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>

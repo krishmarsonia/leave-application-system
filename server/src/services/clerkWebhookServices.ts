@@ -1,6 +1,10 @@
 import { Webhook, WebhookRequiredHeaders } from "svix";
 
-import { createOneUser, findOneUser } from "../dbServices/userDbServices";
+import {
+  createOneUser,
+  findOneUser,
+  findUsers,
+} from "../dbServices/userDbServices";
 
 export const clerkWebHookService = async (
   payloadString: any,
@@ -29,6 +33,38 @@ export const clerkWebHookService = async (
       existingUser.profileImage = attributes.profile_image_url;
       await existingUser.save();
     }
+  } catch (error: any) {
+    if (!error.statusCode) {
+      error.statusCode = 422;
+    }
+    throw error;
+  }
+};
+
+export const getTodaysBirthdayServices = async () => {
+  try {
+    const startingDay = new Date();
+
+    const wholeBirthdayList = await findUsers({
+      select: {
+        _id: 1,
+        birthday: 1,
+        name: 1,
+        profileImage: 1,
+      },
+    });
+    const birthdayList = wholeBirthdayList.map((wbl) => {
+      if (wbl.birthday) {
+        const date = new Date(wbl.birthday);
+        if (
+          date.getMonth() === startingDay.getMonth() &&
+          date.getDate() === startingDay.getDate()
+        ) {
+          return wbl;
+        }
+      }
+    });
+    return birthdayList;
   } catch (error: any) {
     if (!error.statusCode) {
       error.statusCode = 422;

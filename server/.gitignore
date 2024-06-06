@@ -1,6 +1,4 @@
 node_modules/
 .env
-secret/
-
-src/controllers/testControllers.ts
-src/routes/testRoutes.ts
+/src/routes/testRoutes.ts
+/src/controllers/testControllers.ts

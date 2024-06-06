@@ -30,9 +30,9 @@ export const findLeaves = (props: {
       result = Leave.find();
     }
     if (populate) {
-      return  result.populate(populate);
+      return result.populate(populate);
     } else {
-      return  result;
+      return result;
     }
   } catch (error: any) {
     if (!error.statusCode) {
@@ -48,6 +48,21 @@ export const updateLeave = async (
 ) => {
   try {
     const result = await Leave.findOneAndUpdate(query, data, { new: true });
+    return result;
+  } catch (error: any) {
+    if (!error.statusCode) {
+      error.statusCode = 422;
+    }
+    throw error;
+  }
+};
+
+export const findLeave = async (query: PartialNull<LeaveInterface>) => {
+  try {
+    if (!query) {
+      throw new CustomError("query was not passed in the parameters", 422);
+    }
+    const result = await Leave.findOne(query);
     return result;
   } catch (error: any) {
     if (!error.statusCode) {

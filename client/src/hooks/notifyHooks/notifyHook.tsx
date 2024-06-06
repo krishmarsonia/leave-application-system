@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const getNotifications = (userId: string) => {
   return axios.get<
@@ -10,12 +10,16 @@ const getNotifications = (userId: string) => {
       seen: boolean;
       userId: string;
       _id: string;
+      createdAt: string;
+      updatedAt: string;
     }[]
   >(`http://localhost:5000/getNotifications/${userId}`);
 };
 
 export const useGetNotifications = (userId: string) => {
-  return useQuery("userNotification", () => getNotifications(userId), {
+  return useQuery({
+    queryKey: ["userNotification"],
+    queryFn: () => getNotifications(userId),
     refetchOnWindowFocus: false,
   });
 };
@@ -39,7 +43,10 @@ const setNotifications = (data: {
 
 export const useSetNotifications = () => {
   const queryClient = useQueryClient();
-  return useMutation(setNotifications, {onSuccess: () => {
-    queryClient.invalidateQueries("userNotification");
-  }});
+  return useMutation({
+    mutationFn: setNotifications,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userNotification"] });
+    },
+  });
 };

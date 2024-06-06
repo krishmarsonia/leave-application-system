@@ -1,7 +1,9 @@
+import Punch from "../components/punch";
+
 const Private = () => {
     return (
         <div>
-            Private
+            <Punch />
         </div>
     );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ClerkProvider } from "@clerk/clerk-react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import App from "./App.tsx";
@@ -18,8 +18,10 @@ import RequestLeave from "./routes/requestLeave.tsx";
 import SuccessLeave from "./routes/successLeave.tsx";
 import DashboardLayout from "./layouts/dash-layout.tsx";
 
-
 import "./index.css";
+import "react-toastify/ReactToastify.css";
+import PunchesDisplay from "./routes/punchesDisplay.tsx";
+import WeeklyPunches from "./routes/weeklyPunches.tsx";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,7 @@ const router = createBrowserRouter([
           { path: "/requestLeave", element: <RequestLeave /> },
           { path: "/userLeaves", element: <UserLeaves /> },
           { path: "/successLeave", element: <SuccessLeave /> },
+
           {
             element: <AdminLayout />,
             children: [
@@ -55,6 +58,8 @@ const router = createBrowserRouter([
                 path: "/adminReview",
                 element: <AdminReview />,
               },
+              { path: "/punchesDisplay", element: <PunchesDisplay /> },
+              { path: "/weeklyPunches", element: <WeeklyPunches /> },
             ],
           },
         ],

@@ -25,8 +25,12 @@ const userSchema = new Schema({
   },
   isAdmin: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
+  birthday: {
+    type: Number,
+    required: false,
+  },
 });
 
 export default mongoose.model("User", userSchema);
