@@ -11,7 +11,7 @@ import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import express, { NextFunction, Request, Response } from "express";
 
 import sideFunc from "./routes/basicRoutes";
-import testRoutes from "./routes/testRoutes";
+// import testRoutes from "./routes/testRoutes";
 import clerkRouter from "./routes/clerkRoutes";
 import LeaveRouter from "./routes/leaveRoutes";
 import punchRouter from "./routes/punchRoutes";
@@ -163,7 +163,7 @@ app.get("/", (req, res, next) => {
 });
 app.use(notifyRouter);
 app.use(LeaveRouter);
-app.use(testRoutes);
+// app.use(testRoutes);
 app.use(punchRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

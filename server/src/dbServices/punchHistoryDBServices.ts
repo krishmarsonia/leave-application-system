@@ -1,5 +1,5 @@
 import { CustomError } from "../custom/CustomError";
-import PunchHistory from "../model/PunchHistory";
+import PunchHistory from "../model/punchHistory";
 
 export const createPunchHistory = async (
   data:
