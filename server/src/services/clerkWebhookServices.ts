@@ -44,14 +44,25 @@ export const clerkWebHookService = async (
 export const getTodaysBirthdayServices = async () => {
   try {
     const startingDay = new Date();
-    const endingDay = new Date();
-    startingDay.setHours(0, 0, 0, 0);
-    endingDay.setHours(11, 59, 59, 999);
-    const birthdayList = await findUsers({
-      gteWhere: "birthday",
-      gte: startingDay.getTime(),
-      lteWhere: "birthday",
-      lte: endingDay.getTime(),
+
+    const wholeBirthdayList = await findUsers({
+      select: {
+        _id: 1,
+        birthday: 1,
+        name: 1,
+        profileImage: 1,
+      },
+    });
+    const birthdayList = wholeBirthdayList.map((wbl) => {
+      if (wbl.birthday) {
+        const date = new Date(wbl.birthday);
+        if (
+          date.getMonth() === startingDay.getMonth() &&
+          date.getDate() === startingDay.getDate()
+        ) {
+          return wbl;
+        }
+      }
     });
     return birthdayList;
   } catch (error: any) {

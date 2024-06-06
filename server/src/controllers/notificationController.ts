@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import Notification from "../model/Notification";
 import { CustomError } from "../custom/CustomError";
 import {
   getNotificationsServices,

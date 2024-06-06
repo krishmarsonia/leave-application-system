@@ -26,6 +26,8 @@ import {
 import { createPunchHistory } from "./dbServices/punchHistoryDBServices";
 import { findLeave } from "./dbServices/leaveDBServices";
 
+import "dotenv";
+
 const app = express();
 
 const whiteList = [
@@ -143,7 +145,7 @@ schedule.scheduleJob("04 11 * * 1-6", async () => {
     );
     console.log(134, punchesTransfer);
     await createPunchHistory(punchesTransfer);
-    await deletePunches(true)
+    await deletePunches(true);
   } catch (error: any) {
     console.log(error);
     const content =
@@ -194,11 +196,9 @@ io.on("connection", async (socket) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://Krish_Marsonia:x5fRiStvTOU5KGOB@cluster0.ecnqg.mongodb.net/Leave_Application?retryWrites=true&w=majority"
-  )
+  .connect(process.env.MONGO_URI!)
   .then(() => {
-    server.listen(5000, () => {
+    server.listen(process.env.PORT ?? 5000, () => {
       console.log("server running at 5000");
     });
   })

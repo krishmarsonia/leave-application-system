@@ -9,10 +9,12 @@ import {
 } from "@clerk/clerk-react";
 import { socket } from "../socket";
 import LocationHistoryState from "../context/locationHistory/locationHistoryState";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ErrorBoundary } from "../ErrorBoundary";
 import Notification from "../components/notification";
 import { Bounce, ToastContainer } from "react-toastify";
+import { getDateFromMilliSeconds } from "../util/timeCalculation";
+import Modal from "../components/modal";
 // import { io } from "socket.io-client";
 // import { useContext } from "react";
 // import { useContext } from "react";
@@ -25,6 +27,7 @@ if (!PUBLISHABLE_KEY) {
 export default function RootLayout() {
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const [open, setOpen] = useState(false);
 
   let isAdmin = false;
   // const { setSocket } = useContext(SocketContext);
@@ -36,6 +39,17 @@ export default function RootLayout() {
 
     document.documentElement.classList.toggle("dark", preferedDarkMode);
   }, []);
+
+  const todaysDate = getDateFromMilliSeconds(Date.now());
+  const localDate = localStorage.getItem("today")
+  useEffect(() => {
+      if(localDate !== todaysDate){
+        setOpen(true);
+      }else{
+        setOpen(false);
+      }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localDate])
 
   if (isLoaded && userId) {
     socket.disconnect();
@@ -51,6 +65,12 @@ export default function RootLayout() {
       }
     }
   }
+
+  const modalCloseHandler = () => {
+    localStorage.setItem("today", todaysDate);
+    setOpen(false);
+  }
+  
   return (
     // <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
     <>
@@ -102,6 +122,7 @@ export default function RootLayout() {
         <main className="mt-16 mx-36">
           <ErrorBoundary>
             <Outlet />
+            {open && <Modal modalCloseHandler={modalCloseHandler} />}
             <ToastContainer
               position="top-right"
               autoClose={3000}

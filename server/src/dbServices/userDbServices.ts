@@ -53,6 +53,16 @@ export const findUsers = async (props?: {
     isAdmin?: boolean;
     birthday?: number;
   };
+  select?: {
+    externalId?: 1 | 0;
+    _id?: 1 | 0;
+    email?: 1 | 0;
+    name?: 1 | 0;
+    leaves_remaining?: 1 | 0;
+    isAdmin?: 1 | 0;
+    birthday?: 1 | 0;
+    profileImage?: 1 | 0;
+  };
   gte?: number;
   gteWhere?: string;
   lte?: number;
@@ -64,9 +74,11 @@ export const findUsers = async (props?: {
     const gteWhere = props?.gteWhere;
     const lte = props?.lte;
     const lteWhere = props?.lteWhere;
+    const select = props?.select;
     let users;
     users = User.find();
     if (query) {
+      console.log("there is a query");
       users = User.find(query);
     }
     if (gte && gteWhere) {
@@ -75,6 +87,10 @@ export const findUsers = async (props?: {
     if (lte && lteWhere) {
       users = users.where(lteWhere).lte(lte);
     }
+    if (select) {
+      users = users.select(select);
+    }
+    console.log(users.getQuery());
     return await users;
   } catch (error: any) {
     if (!error.statusCode) {
