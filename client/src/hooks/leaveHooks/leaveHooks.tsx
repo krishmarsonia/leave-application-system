@@ -5,7 +5,7 @@ import { Leaves } from "../../types/Leaves";
 import { LeaveInterface } from "../../../../server/src/types/Leave";
 
 const postCreateLeave = (data: LeaveInterface) => {
-  return axios.post<string>("http://localhost:5000/postCreateLeave", data);
+  return axios.create({baseURL: "/"}).post<string>("/postCreateLeave", data);
 };
 
 export const usePostCreateLeave = () => {
