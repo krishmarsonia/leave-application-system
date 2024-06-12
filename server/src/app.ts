@@ -191,7 +191,7 @@ app.use(punchRouter);
 
 // console.log(170, path.resolve(__dirname, "public", "index.html"));
 // console.log(path.resolve(path.resolve(), "dist/public"));
-
+console.log(194, path.join("./public/index.html"));
 app.use(express.static(path.resolve(__dirname, "public")));
 app.get("*", (req, res, next) => {
   console.log("loading html");
