@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import "./success.css";
 
 const NotAdmin = () => {
+  const navigate = useNavigate();
   return (
     <div className="absolute top-1/2 left-1/2 w-screen" id="centeradiv">
       <center>
@@ -13,12 +14,14 @@ const NotAdmin = () => {
           Let's do a fresh start.
         </h1>
         <div className="mt-7">
-          <Link
+          <button
             className="py-1.5 px-3 bg-mavrick text-white font-semibold rounded-lg border-mavrick border-2 hover:bg-white hover:text-mavrick"
-            to={"/"}
+            onClick={() => {
+              navigate("/");
+            }}
           >
             Go to Dashboard
-          </Link>
+          </button>
         </div>
       </center>
     </div>
