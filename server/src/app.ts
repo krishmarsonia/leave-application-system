@@ -189,10 +189,12 @@ app.use(LeaveRouter);
 // app.use(testRoutes);
 app.use(punchRouter);
 
-console.log(170, path.resolve(__dirname, "public", "index.html"));
-console.log(path.resolve(path.resolve(), "dist/public"));
+// console.log(170, path.resolve(__dirname, "public", "index.html"));
+// console.log(path.resolve(path.resolve(), "dist/public"));
+
 app.use(express.static(path.resolve(__dirname, "public")));
 app.get("*", (req, res, next) => {
+  console.log("loading html");
   res.setHeader('Content-Type', 'text/html');
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
