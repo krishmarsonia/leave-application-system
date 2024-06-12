@@ -181,10 +181,10 @@ app.use(express.json());
 //     fs.appendFileSync(process.cwd() + "/src/logs/scheduleError.txt", content);
 //   }
 // });
-app.get("/", (req, res, next) => {
-  console.log(req.ip);
-  return res.json("welcome to the Leave Management API's");
-});
+// app.get("/", (req, res, next) => {
+//   console.log(req.ip);
+//   return res.json("welcome to the Leave Management API's");
+// });
 
 app.use(notifyRouter);
 app.use(LeaveRouter);
