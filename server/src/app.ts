@@ -191,10 +191,10 @@ app.use(punchRouter);
 
 console.log(170, path.resolve(__dirname, "public", "index.html"));
 console.log(path.resolve(path.resolve(), "dist/public"));
-app.use(express.static(path.resolve(path.resolve(), "dist/public")));
+app.use(express.static(path.resolve(__dirname, "public")));
 app.get("*", (req, res, next) => {
   res.setHeader('Content-Type', 'text/html');
-  res.sendFile(path.join(path.resolve(), "dist", "public", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
