@@ -1,5 +1,6 @@
-import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import axios from "../../util/axiosInstance";
 
 const getNotifications = (userId: string) => {
   return axios.get<
@@ -13,7 +14,7 @@ const getNotifications = (userId: string) => {
       createdAt: string;
       updatedAt: string;
     }[]
-  >(`http://localhost:5000/getNotifications/${userId}`);
+  >(`/getNotifications/${userId}`);
 };
 
 export const useGetNotifications = (userId: string) => {
@@ -36,7 +37,7 @@ const setNotifications = (data: {
   };
 }) => {
   return axios.put(
-    "http://localhost:5000/setNotifications/" + data.userId,
+    "/setNotifications/" + data.userId,
     data.data
   );
 };

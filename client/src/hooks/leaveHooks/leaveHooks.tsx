@@ -1,11 +1,13 @@
-import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Leaves } from "../../types/Leaves";
+import axios from "../../util/axiosInstance";
 import { LeaveInterface } from "../../../../server/src/types/Leave";
 
+// const axiosInstance = axios.create({ baseURL: "/" });
+
 const postCreateLeave = (data: LeaveInterface) => {
-  return axios.create({baseURL: "/"}).post<string>("/postCreateLeave", data);
+  return axios.post<string>("/postCreateLeave", data);
 };
 
 export const usePostCreateLeave = () => {
@@ -19,7 +21,7 @@ export const usePostCreateLeave = () => {
 };
 
 const getLeaves = (userId: string) => {
-  return axios.get<Leaves[]>(`http://localhost:5000/getLeaves/${userId}`, {
+  return axios.get<Leaves[]>(`/getLeaves/${userId}`, {
     withCredentials: true,
   });
 };
@@ -33,7 +35,7 @@ export const useGetLeaves = (userId: string) => {
 };
 
 const getAllLeavesList = () => {
-  return axios.get<Leaves[]>("http://localhost:5000/getAllLeaves");
+  return axios.get<Leaves[]>("/getAllLeaves");
 };
 
 export const useGetAllLeaves = () => {
@@ -50,7 +52,7 @@ const postActionOnLeave = (data: {
 }) => {
   console.log(42, data);
   return axios.post(
-    "http://localhost:5000/postActionOnLeave",
+    "/postActionOnLeave",
     { data: data },
     { withCredentials: true }
   );

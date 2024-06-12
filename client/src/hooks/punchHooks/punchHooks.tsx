@@ -1,5 +1,6 @@
-import axios from "axios";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+
+import axios from "../../util/axiosInstance";
 
 const putUpdatePunch = (data: {
   userId?: string;
@@ -7,7 +8,7 @@ const putUpdatePunch = (data: {
   punchOutTime?: number;
   date?: number;
 }) => {
-  return axios.put("http://localhost:5000/updatePunch", data);
+  return axios.put("/updatePunch", data);
 };
 
 export const usePutUpdatePunch = () => {
@@ -15,7 +16,7 @@ export const usePutUpdatePunch = () => {
 };
 
 const postPunch = (data: { mode: "punch-in" | "punch-out" }) => {
-  return axios.post("http://localhost:5000/punch", data, {
+  return axios.post("/punch", data, {
     withCredentials: true,
   });
 };
@@ -44,7 +45,7 @@ const getPunchDisplay = ({ pageParam }: { pageParam: number }) => {
     }[];
     currentPage: number;
     nextPage: number;
-  }>(`http://localhost:5000/punchDisplay/${pageParam}`);
+  }>(`/punchDisplay/${pageParam}`);
 };
 
 export const usePunchDisplay = () => {
@@ -60,7 +61,7 @@ export const weeklyPunch = (weekStart: number, weekEnd: number) => {
   return axios.get<
     { userId: string; userName: string; leaveDays: number; workHours: number }[]
   >(
-    `http://localhost:5000/weeklyPunch?weekStart=${weekStart}&weekEnd=${weekEnd}`
+    `/weeklyPunch?weekStart=${weekStart}&weekEnd=${weekEnd}`
   );
 };
 
