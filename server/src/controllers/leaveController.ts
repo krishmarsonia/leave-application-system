@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import io from "../app";
+// import io from "../app";
 import { CustomError } from "../custom/CustomError";
 import {
   getAllLeavesServices,

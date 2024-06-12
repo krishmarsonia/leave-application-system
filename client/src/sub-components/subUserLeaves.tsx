@@ -1,23 +1,30 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
+import { useChannel } from "ably/react";
 import { useGetLeaves } from "../hooks/leaveHooks/leaveHooks";
-import { socket } from "../socket";
+// import { socket } from "../socket";
 import { isApprovedByAUser } from "../types/Leaves";
 
 const SubUserLeaves = (props: { userId: string }) => {
   const { userId } = props;
   const { data, isLoading, isError, error, refetch } = useGetLeaves(userId);
   console.log(data);
-  useEffect(() => {
-    socket.on("actionSuccess", () => {
-      refetch();
-    });
-    return () => {
-      socket.off("actionSuccess", () => {
-        console.log("actionSuccess is being removed");
-      });
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+  useChannel("leaveUpdated", `notify-user-${userId}`, (message) => {
+    console.log(message);
+    refetch();
+  });
+
+  // useEffect(() => {
+  //   socket.on("actionSuccess", () => {
+  //     refetch();
+  //   });
+  //   return () => {
+  //     socket.off("actionSuccess", () => {
+  //       console.log("actionSuccess is being removed");
+  //     });
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   if (isLoading) {
     return <h1>Loading...</h1>;

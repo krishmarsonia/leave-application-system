@@ -1,20 +1,21 @@
-import { Link, Outlet } from "react-router-dom";
-import {
-  // ClerkProvider,
-  SignedIn,
-  SignedOut,
-  UserButton,
-  useAuth,
-  useUser,
-} from "@clerk/clerk-react";
-import { socket } from "../socket";
-import LocationHistoryState from "../context/locationHistory/locationHistoryState";
 import { useEffect, useState } from "react";
+import { ChannelProvider } from "ably/react";
+import { Link, Outlet } from "react-router-dom";
+import { Bounce, ToastContainer } from "react-toastify";
+  import {
+    // ClerkProvider,
+    SignedIn,
+    SignedOut,
+    UserButton,
+    useAuth,
+    useUser,
+  } from "@clerk/clerk-react";
+// import { socket } from "../socket";
+import Modal from "../components/modal";
 import { ErrorBoundary } from "../ErrorBoundary";
 import Notification from "../components/notification";
-import { Bounce, ToastContainer } from "react-toastify";
 import { getDateFromMilliSeconds } from "../util/timeCalculation";
-import Modal from "../components/modal";
+import LocationHistoryState from "../context/locationHistory/locationHistoryState";
 // import { io } from "socket.io-client";
 // import { useContext } from "react";
 // import { useContext } from "react";
@@ -41,21 +42,21 @@ export default function RootLayout() {
   }, []);
 
   const todaysDate = getDateFromMilliSeconds(Date.now());
-  const localDate = localStorage.getItem("today")
+  const localDate = localStorage.getItem("today");
   useEffect(() => {
-      if(localDate !== todaysDate){
-        setOpen(true);
-      }else{
-        setOpen(false);
-      }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [localDate])
+    if (localDate !== todaysDate) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localDate]);
 
-  if (isLoaded && userId) {
-    socket.disconnect();
-    socket.io.opts.query = { userId: userId };
-    socket.connect();
-  }
+  // if (isLoaded && userId) {
+  //   socket.disconnect();
+  //   socket.io.opts.query = { userId: userId };
+  //   socket.connect();
+  // }
   if (isLoaded) {
     if (userId) {
       if (user?.publicMetadata.isAdmin) {
@@ -69,8 +70,8 @@ export default function RootLayout() {
   const modalCloseHandler = () => {
     localStorage.setItem("today", todaysDate);
     setOpen(false);
-  }
-  
+  };
+
   return (
     // <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
     <>
@@ -101,7 +102,12 @@ export default function RootLayout() {
               <SignedIn>
                 <div className="flex gap-10">
                   <div>
-                    <Notification userId={userId!} />
+                    <ChannelProvider channelName="leaveUpdated">
+                      <Notification
+                        userId={userId!}
+                        isAdmin={isAdmin ? true : false}
+                      />
+                    </ChannelProvider>
                   </div>
                   <div>
                     <UserButton />
@@ -121,7 +127,9 @@ export default function RootLayout() {
         </header>
         <main className="mt-16 mx-36">
           <ErrorBoundary>
-            <Outlet />
+            <ChannelProvider channelName="leaveUpdated">
+              <Outlet />
+            </ChannelProvider>
             {open && <Modal modalCloseHandler={modalCloseHandler} />}
             <ToastContainer
               position="top-right"

@@ -1,8 +1,8 @@
+import { isEmployeeIdAUser } from "../types/Leaves";
 import {
   useGetAllLeaves,
   usePostActionOnLeave,
 } from "../hooks/leaveHooks/leaveHooks";
-import { isEmployeeIdAUser } from "../types/Leaves";
 
 const AdminReview = () => {
   const { data, isLoading, isError, error } = useGetAllLeaves();

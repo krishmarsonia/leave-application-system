@@ -53,16 +53,18 @@ export const getTodaysBirthdayServices = async () => {
         profileImage: 1,
       },
     });
-    const birthdayList = wholeBirthdayList.map((wbl) => {
+    const birthdayList = wholeBirthdayList.filter((wbl) => {
       if (wbl.birthday) {
         const date = new Date(wbl.birthday);
         if (
           date.getMonth() === startingDay.getMonth() &&
           date.getDate() === startingDay.getDate()
         ) {
-          return wbl;
+          return true;
         }
+        return false;
       }
+      return false;
     });
     return birthdayList;
   } catch (error: any) {

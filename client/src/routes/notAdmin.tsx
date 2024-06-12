@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+
 import "./success.css";
+
 const NotAdmin = () => {
   return (
     <div className="absolute top-1/2 left-1/2 w-screen" id="centeradiv">

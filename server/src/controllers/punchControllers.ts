@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { CustomError } from "../custom/CustomError";
 import {
+  punchCRONJobService,
   punchDisplayServices,
   punchServices,
   weeklyPunchServices,
@@ -74,6 +75,22 @@ export const weeklyPunchController = async (
     const result = await weeklyPunchServices(numWeekStart, numWeekEnd);
     console.log(result);
     res.json(result);
+  } catch (error: any) {
+    if (!error.statusCode) {
+      error.statusCode = 422;
+    }
+    return next(error);
+  }
+};
+
+export const punchCRONJobController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await punchCRONJobService();
+    res.status(200);
   } catch (error: any) {
     if (!error.statusCode) {
       error.statusCode = 422;

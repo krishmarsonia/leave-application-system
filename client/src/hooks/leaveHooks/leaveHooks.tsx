@@ -1,7 +1,8 @@
 import axios from "axios";
-import { LeaveInterface } from "../../../../server/src/types/Leave";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import { Leaves } from "../../types/Leaves";
+import { LeaveInterface } from "../../../../server/src/types/Leave";
 
 const postCreateLeave = (data: LeaveInterface) => {
   return axios.post<string>("http://localhost:5000/postCreateLeave", data);
@@ -60,7 +61,7 @@ export const usePostActionOnLeave = () => {
   return useMutation({
     mutationFn: postActionOnLeave,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["allLeaves"]});
+      queryClient.invalidateQueries({ queryKey: ["allLeaves"] });
     },
   });
 };

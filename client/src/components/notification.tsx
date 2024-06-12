@@ -1,17 +1,25 @@
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { IoMdNotifications } from "react-icons/io";
 import { useEffect, useRef, useState } from "react";
-import { socket } from "../socket";
+// import { socket } from "../socket";
+import { useChannel, useConnectionStateListener } from "ably/react";
+
+import { notificationTimeCalculation } from "../../../server/src/util/timeCalculations";
 import {
   useGetNotifications,
   useSetNotifications,
 } from "../hooks/notifyHooks/notifyHook";
 // import { AxiosResponse } from "axios";
 
-import { notificationTimeCalculation } from "../../../server/src/util/timeCalculations";
 
-const Notification = ({ userId }: { userId: string }) => {
+const Notification = ({
+  userId,
+  isAdmin,
+}: {
+  userId: string;
+  isAdmin: boolean;
+}) => {
   // const location = useLocation();
   const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
   const [openOnce, setOpenOnce] = useState(false);
@@ -19,6 +27,20 @@ const Notification = ({ userId }: { userId: string }) => {
     useGetNotifications(userId);
   const { mutateAsync } = useSetNotifications();
   const refs = useRef<HTMLDivElement | null>(null);
+  useConnectionStateListener("connected", () => {
+    console.log("ably connected");
+  });
+  useChannel("leaveUpdated", `notification-isAdmin-${isAdmin}`, (message) => {
+    console.log(message);
+    refetch();
+    // setMessages((prevMessage) => [...prevMessage, message]);
+  });
+
+  useChannel("leaveUpdated", `notify-user-${userId}`, (message) => {
+    console.log(message);
+    refetch();
+  });
+
   useEffect(() => {
     const checkIfClickedOutside = (e: MouseEvent) => {
       if (refs.current !== null) {
@@ -56,23 +78,23 @@ const Notification = ({ userId }: { userId: string }) => {
     setOpenOnce(false);
   }, [data?.data]);
 
-  useEffect(() => {
-    socket.on("actionSuccess", (arg: { status: "accepted" | "rejected" }) => {
-      if (arg.status === "accepted") {
-        toast.success("Your leave application have been accepted");
-      } else {
-        toast.warn("Your leave application have been rejected");
-      }
-      refetch();
-    });
-    return () => {
-      socket.off("actionSuccess", () => {
-        console.log("actionSuccess is being removed");
-      });
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  // useEffect(() => {
+  //   socket.on("actionSuccess", (arg: { status: "accepted" | "rejected" }) => {
+  //     if (arg.status === "accepted") {
+  //       toast.success("Your leave application have been accepted");
+  //     } else {
+  //       toast.warn("Your leave application have been rejected");
+  //     }
+  //     refetch();
+  //   });
+  //   return () => {
+  //     socket.off("actionSuccess", () => {
+  //       console.log("actionSuccess is being removed");
+  //     });
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+  console.log(data);
   if (isLoading) {
     return <h1>Loading...</h1>;
   }
@@ -86,7 +108,7 @@ const Notification = ({ userId }: { userId: string }) => {
         className="hover:cursor-pointer mt-0.5"
         onClick={() => setNotificationOpen(!notificationOpen)}
       >
-        <IoMdNotifications size={25}/>
+        <IoMdNotifications size={25} />
         <NotificationCount data={data?.data} />
       </div>
       {notificationOpen ? (
@@ -138,7 +160,7 @@ const NotificationCount = ({
 }) => {
   const oCount = data?.filter((item) => item.seen === false);
   return oCount?.length && oCount.length > 0 ? (
-    <div className="relative bottom-7 left-20 border-red-600 bg-red-600 rounded-full w-6 text-center">
+    <div className="relative bottom-9 left-3 border-red-600 bg-red-600 rounded-full w-6 text-center">
       {oCount.length}
     </div>
   ) : null;

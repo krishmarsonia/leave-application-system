@@ -1,5 +1,6 @@
-import { SignIn } from "@clerk/clerk-react";
 import { useContext } from "react";
+import { SignIn } from "@clerk/clerk-react";
+
 import LocationHistoryContext from "../context/locationHistory/locationHistoryContext";
 
 const SignInPage = () => {

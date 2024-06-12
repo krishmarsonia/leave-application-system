@@ -9,8 +9,9 @@ import { findOneUser, findUsers } from "../dbServices/userDbServices";
 import { LeaveInterface } from "../types/Leave";
 import { ExternalError } from "../types/externalError";
 import { timeCalculations } from "../util/timeCalculations";
-import io from "../app";
+// import io from "../app";
 import { leaveCalculation } from "../util/leaveCalculation";
+import { ably } from "../connections/ablyConnection";
 
 export const postCreateLeaveServices = async (
   startDate: number,
@@ -51,8 +52,13 @@ export const postCreateLeaveServices = async (
       notifications.push(tempNoti);
     });
     await createNotification(notifications);
-    const adminsIds = admins.map((admin) => admin.externalId);
-    io.to(adminsIds).emit("actionSuccess", { status: "success" });
+    // const adminsIds = admins.map((admin) => admin.externalId);
+    // io.to(adminsIds).emit("actionSuccess", { status: "success" });
+    const channel = ably.channels.get("leaveUpdated");
+    await channel.publish(
+      "notification-isAdmin-true",
+      "this is only for admins"
+    );
     //send email
     return empId;
   } catch (error: any) {
@@ -160,7 +166,11 @@ export const postActionOnLeaveServices = async (
           )} has been rejcted ${admin?.name}`,
       route: "/userLeaves",
     });
-    io.to(employeeUser.externalId).emit("actionSuccess", {
+    // io.to(employeeUser.externalId).emit("actionSuccess", {
+    //   status: approve ? "accepted" : "rejected",
+    // });
+    const channel = ably.channels.get("leaveUpdated");
+    await channel.publish(`notify-user-${employeeUser.externalId}`, {
       status: approve ? "accepted" : "rejected",
     });
     return employeeUser;

@@ -1,14 +1,19 @@
+import fs from "fs";
+
 import { CustomError } from "../custom/CustomError";
+import { findLeave } from "../dbServices/leaveDBServices";
+import { findOneUser, findUsers } from "../dbServices/userDbServices";
 import {
-  createPunch,
-  findPunch,
-  getPunches,
-} from "../dbServices/punchDBServices";
-import {
+  createPunchHistory,
   findOnePunchHistory,
   findPunchHistories,
 } from "../dbServices/punchHistoryDBServices";
-import { findOneUser, findUsers } from "../dbServices/userDbServices";
+import {
+  createPunch,
+  deletePunches,
+  findPunch,
+  getPunches,
+} from "../dbServices/punchDBServices";
 
 export const punchServices = async (
   mode: "punch-in" | "punch-out",
@@ -203,5 +208,85 @@ export const weeklyPunchServices = async (
       error.statusCode = 422;
     }
     throw error;
+  }
+};
+
+export const punchCRONJobService = async () => {
+  try {
+    let users = await findUsers();
+    const punches = await getPunches({});
+    const tempEndPunchTime = new Date();
+    const punchTransferDate = new Date();
+    punchTransferDate.setHours(12, 0, 0, 0);
+    tempEndPunchTime.setHours(18, 0, 0, 0);
+    let tempPunchCount = 0;
+    let punchesTransfer: {
+      userId: string;
+      punchInTime: number;
+      punchOutTime: number;
+      isOnLeave: boolean;
+      date: number;
+    }[] = [];
+    punches.map(async (pun) => {
+      users = users.filter(
+        (user) => user._id.toString() !== pun.userId?.toString()
+      );
+      // if (pun.punchOutTime === 0) {
+      //   pun.punchOutTime = tempEndPunchTime.getTime();
+      //   await pun.save();
+      // }
+      punchesTransfer.push({
+        userId: pun.userId?.toString()!,
+        punchInTime: pun.punchInTime,
+        punchOutTime: pun.punchOutTime,
+        isOnLeave: false,
+        date: punchTransferDate.getTime(),
+      });
+    });
+    await createPunchHistory(punchesTransfer);
+    punchesTransfer = [];
+    console.log(109, users);
+    await Promise.all(
+      users.map(async (user) => {
+        const leaveResult = await findLeave({
+          employeeId: user._id.toString(),
+          leaveType: { $in: ["fullDay", "SeveralDays"] },
+          startDate: { $lt: punchTransferDate.getTime() },
+          endDate: { $gt: punchTransferDate.getTime() },
+        });
+        console.log(leaveResult);
+        if (leaveResult) {
+          punchesTransfer.push({
+            userId: user._id.toString(),
+            date: punchTransferDate.getTime(),
+            isOnLeave: true,
+            punchInTime: 0,
+            punchOutTime: 0,
+          });
+        } else {
+          console.log("127, running");
+          punchesTransfer.push({
+            userId: user._id.toString(),
+            date: punchTransferDate.getTime(),
+            isOnLeave: false,
+            punchInTime: 0,
+            punchOutTime: 0,
+          });
+        }
+        tempPunchCount++;
+      })
+    );
+    console.log(134, punchesTransfer);
+    await createPunchHistory(punchesTransfer);
+    await deletePunches(true);
+  } catch (error: any) {
+    console.log(error);
+    const content =
+      new Date() +
+      "\r\n" +
+      (error.stack ? error.stack : error.message) +
+      "\r\n" +
+      "\r\n";
+    fs.appendFileSync(process.cwd() + "/src/logs/scheduleError.txt", content);
   }
 };

@@ -1,7 +1,7 @@
+import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
 import { usePunchDisplay } from "../hooks/punchHooks/punchHooks";
-import React, { useEffect } from "react";
 import {
   getDateFromMilliSeconds,
   getTimeFromMilliSeconds,

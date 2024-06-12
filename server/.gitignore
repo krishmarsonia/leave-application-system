@@ -1,4 +1,6 @@
 node_modules/
 .env
 /src/routes/testRoutes.ts
+/src/routes/basicRoutes.ts
 /src/controllers/testControllers.ts
+.vercel
