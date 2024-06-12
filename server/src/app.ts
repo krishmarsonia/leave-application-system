@@ -51,10 +51,11 @@ app.use(
     credentials: true,
     origin: (origin, callback) => {
       console.log(52, origin);
-      if (!origin || whiteList.includes(origin!)) {
-        return callback(null, true);
-      }
-      callback(new CustomError("Not allowed by CORS", 501));
+      // if (!origin || whiteList.includes(origin!)) {
+      //   return callback(null, true);
+      // }
+      // callback(new CustomError("Not allowed by CORS", 501));
+      return callback(null, true);
     },
   })
 );
