@@ -1,5 +1,9 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({ baseURL: "/" });
+const baseURL = import.meta.env.VITE_BASE_URL
+
+console.log(baseURL);
+
+const axiosInstance = axios.create({ baseURL: baseURL });
 
 export default axiosInstance;

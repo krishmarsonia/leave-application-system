@@ -197,7 +197,6 @@ console.log(194, path.join(__dirname, "public", "index.html"));
 app.use(express.static(path.resolve(__dirname, "public")));
 app.get("*", (req, res, next) => {
   console.log("loading html");
-  res.setHeader("Content-Type", "text/html");
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
