@@ -16,7 +16,9 @@ const AdminReview = () => {
   }
   return (
     <div>
-      <h1 className="text-center text-2xl text-mavrick font-semibold">Leaves Action Center</h1>
+      <h1 className="text-center text-2xl text-mavrick font-semibold">
+        Leaves Action Center
+      </h1>
       {data?.data.map((leave) => {
         const tempStartDate = new Date(leave.startDate);
         const tempEndDate = new Date(leave.endDate);
@@ -42,7 +44,11 @@ const AdminReview = () => {
           "/" +
           tempCreatedAt.getFullYear();
         return (
-          <div className="flex border my-3 bg-baylor shadow-sm rounded-md mx-auto">
+          <div
+            className={`flex border my-3 bg-baylor shadow-sm rounded-md mx-auto ${
+              !leave.cancelled && !leave.approved ? null : `py-5`
+            }`}
+          >
             <div className="w-3/12 flex justify-center items-center flex-col">
               <img
                 className="rounded-full w-20 h-20"
@@ -141,34 +147,36 @@ const AdminReview = () => {
                   </span>
                 </div>
               </div>
-              <div className="justify-end w-11/12 m-3 flex mt-8 mr-10">
-                <div className="mx-2">
-                  <button
-                    className="text-green-600 border-2 border-green-600 rounded-md font-medium hover:bg-green-600 hover:text-white py-1 px-2"
-                    onClick={() => {
-                      mutate({
-                        leaveId: leave._id,
-                        approve: true,
-                      });
-                    }}
-                  >
-                    Approve
-                  </button>
+              {!leave.cancelled && !leave.approved ? (
+                <div className="justify-end w-11/12 m-3 flex mt-8 mr-10">
+                  <div className="mx-2">
+                    <button
+                      className="text-green-600 border-2 border-green-600 rounded-md font-medium hover:bg-green-600 hover:text-white py-1 px-2"
+                      onClick={() => {
+                        mutate({
+                          leaveId: leave._id,
+                          approve: true,
+                        });
+                      }}
+                    >
+                      Approve
+                    </button>
+                  </div>
+                  <div className="mx-2">
+                    <button
+                      className="text-red-600 border-2 border-red-600 rounded-md font-medium hover:bg-red-600 hover:text-white py-1 px-2"
+                      onClick={() => {
+                        mutate({
+                          leaveId: leave._id,
+                          approve: false,
+                        });
+                      }}
+                    >
+                      Decline
+                    </button>
+                  </div>
                 </div>
-                <div className="mx-2">
-                  <button
-                    className="text-red-600 border-2 border-red-600 rounded-md font-medium hover:bg-red-600 hover:text-white py-1 px-2"
-                    onClick={() => {
-                      mutate({
-                        leaveId: leave._id,
-                        approve: false,
-                      });
-                    }}
-                  >
-                    Decline
-                  </button>
-                </div>
-              </div>
+              ) : null}
             </div>
           </div>
         );

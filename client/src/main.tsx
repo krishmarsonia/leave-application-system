@@ -1,9 +1,10 @@
 import React from "react";
 import * as Ably from "ably";
 import ReactDOM from "react-dom/client";
+import { AblyProvider } from "ably/react";
 import { ClerkProvider } from "@clerk/clerk-react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import App from "./App.tsx";
 import Public from "./routes/public.tsx";
@@ -17,20 +18,18 @@ import RootLayout from "./layouts/root-layout.tsx";
 import AdminLayout from "./layouts/admin-layout.tsx";
 import RequestLeave from "./routes/requestLeave.tsx";
 import SuccessLeave from "./routes/successLeave.tsx";
+import WeeklyPunches from "./routes/weeklyPunches.tsx";
 import DashboardLayout from "./layouts/dash-layout.tsx";
+import PunchesDisplay from "./routes/punchesDisplay.tsx";
 
 import "./index.css";
 import "react-toastify/ReactToastify.css";
-import PunchesDisplay from "./routes/punchesDisplay.tsx";
-import WeeklyPunches from "./routes/weeklyPunches.tsx";
-import { AblyProvider } from "ably/react";
 
 const queryClient = new QueryClient();
 
 const ablyClient = new Ably.Realtime(
   "ShUhdg.9Jaijg:Wk7Wy8DqHuxzq9t2eN8fXVcsRm-Kt4OZxKaPZvL7oWk"
 );
-
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 

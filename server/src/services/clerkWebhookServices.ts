@@ -1,3 +1,4 @@
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import { Webhook, WebhookRequiredHeaders } from "svix";
 
 import {
@@ -14,9 +15,11 @@ export const clerkWebHookService = async (
     if (!payloadString || !svixHeaders) {
       throw new Error("parameters not passed");
     }
+    const users = clerkClient.users;
     const wh = new Webhook(process.env.SIGNING_SECRET_NGROK!);
     const evt = wh.verify(payloadString, svixHeaders) as any;
     const { id, ...attributes } = evt.data;
+    await users.updateUser(id, { publicMetadata: { isAdmin: false } });
     const eventType = evt.type; //"user.created", "user.updated"
     //set {isAdmin: false in public route}
     const existingUser = await findOneUser({ externalId: id });

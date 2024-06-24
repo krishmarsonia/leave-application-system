@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { ChannelProvider } from "ably/react";
 import { Link, Outlet } from "react-router-dom";
 import { Bounce, ToastContainer } from "react-toastify";
-  import {
-    // ClerkProvider,
-    SignedIn,
-    SignedOut,
-    UserButton,
-    useAuth,
-    useUser,
-  } from "@clerk/clerk-react";
+import {
+  // ClerkProvider,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  useAuth,
+  useUser,
+} from "@clerk/clerk-react";
 // import { socket } from "../socket";
 import Modal from "../components/modal";
 import { ErrorBoundary } from "../ErrorBoundary";
@@ -76,27 +76,47 @@ export default function RootLayout() {
     // <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
     <>
       <LocationHistoryState>
-        <header>
-          <div className="flex justify-between items-center mx-36 mt-5">
-            <div className="flex gap-16">
+        <header className="bg-baylor">
+          <div className="flex justify-between items-center mx-36 py-3 ">
+            <div className="flex gap-12">
               <div>
                 <Link to={"/"}>
                   <p className="font-semibold">Home</p>
                 </Link>
               </div>
-              <div>
-                <Link to={"/requestLeave"}>
-                  <p className="font-semibold">Apply for leave</p>
-                </Link>
-              </div>
-              <div>
-                <p className="font-semibold">Upcoming Leaves</p>
-              </div>
-              {isAdmin ? (
+              <SignedIn>
                 <div>
-                  <p className="font-semibold">Leave History</p>
+                  <Link to={"/requestLeave"}>
+                    <p className="font-semibold">Apply for leave</p>
+                  </Link>
                 </div>
-              ) : null}
+              </SignedIn>
+              <SignedIn>
+                <Link to={"/userLeaves"}>
+                  <p className="font-semibold">All Leaves</p>
+                </Link>
+              </SignedIn>
+              <SignedIn>
+                {isAdmin ? (
+                  <Link to={"/adminReview"}>
+                    <p className="font-semibold">Review Leaves</p>
+                  </Link>
+                ) : null}
+              </SignedIn>
+              <SignedIn>
+                {isAdmin ? (
+                  <Link to={"/punchesDisplay"}>
+                    <p className="font-semibold">Punch History</p>
+                  </Link>
+                ) : null}
+              </SignedIn>
+              <SignedIn>
+                {isAdmin ? (
+                  <Link to={"/weeklyPunches"}>
+                    <p className="font-semibold">Weakly punch history</p>
+                  </Link>
+                ) : null}
+              </SignedIn>
             </div>
             <div>
               <SignedIn>
@@ -115,7 +135,24 @@ export default function RootLayout() {
                 </div>
               </SignedIn>
               <SignedOut>
-                <Link to={"/sign-in"}>Sign In</Link>
+                <div className="flex gap-5">
+                  <div>
+                    <Link
+                      to={"/sign-in"}
+                      className="border-2 border-mavrick px-2 py-1 text-mavrick font-semibold rounded-md hover:bg-mavrick hover:text-white"
+                    >
+                      Sign-in
+                    </Link>
+                  </div>
+                  <div>
+                    <Link
+                      to={"/sign-up"}
+                      className="border-2 border-mavrick px-2 py-1 text-mavrick font-semibold rounded-md hover:bg-mavrick hover:text-white"
+                    >
+                      Sign-up
+                    </Link>
+                  </div>
+                </div>
               </SignedOut>
             </div>
           </div>

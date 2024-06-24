@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { createPublicKey } from "crypto";
-import { clerkClient } from "@clerk/clerk-sdk-node";
+
 import { NextFunction, Request, Response } from "express";
 
 import { jwks } from "../secret/clerkJWKS";

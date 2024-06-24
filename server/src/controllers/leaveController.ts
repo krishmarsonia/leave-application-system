@@ -96,6 +96,12 @@ export const postActionOnLeaveController = async (
   console.log("postActionOnLeaveController");
   try {
     const { data } = req.body;
+    if (!req.isAdmin) {
+      throw new CustomError(
+        "user doesn't have appropriate right for this action",
+        422
+      );
+    }
     if (!data) {
       throw new CustomError("parameters not recived", 422);
     }
