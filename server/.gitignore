@@ -4,3 +4,4 @@ node_modules/
 /src/routes/basicRoutes.ts
 /src/controllers/testControllers.ts
 .vercel
+dist/
