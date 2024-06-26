@@ -51,11 +51,11 @@ app.use(
     credentials: true,
     origin: (origin, callback) => {
       console.log(52, origin);
-      if (!origin || whiteList.includes(origin!)) {
-        return callback(null, true);
-      }
-      callback(new CustomError("Not allowed by CORS", 501));
-      // return callback(null, true);
+      // if (!origin || whiteList.includes(origin!)) {
+      //   return callback(null, true);
+      // }
+      // callback(new CustomError("Not allowed by CORS", 501));
+      return callback(null, true);
     },
   })
 );
@@ -67,20 +67,20 @@ app.use(clerkRouter); //don't move it from here / advance => keep it before body
 //   next()
 // });
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Private-Network", "*");
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "POST, GET, OPTIONS, PUT, DELETE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", "*");
-//   next();
-// });
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Private-Network", "*");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "POST, GET, OPTIONS, PUT, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "*");
+  next();
+});
 
 app.use(cookieParser());
 
