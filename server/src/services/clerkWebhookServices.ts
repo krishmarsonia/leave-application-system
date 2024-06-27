@@ -5,6 +5,7 @@ import {
   findOneUser,
   findUsers,
 } from "../dbServices/userDbServices";
+import { clerk } from "../clerk";
 
 export const clerkWebHookService = async (
   payloadString: any,
@@ -20,7 +21,9 @@ export const clerkWebHookService = async (
     const eventType = evt.type; //"user.created", "user.updated"
     //set {isAdmin: false in public route}
     const existingUser = await findOneUser({ externalId: id });
+    console.log(24, attributes.public_metadata.isAdmin);
     if (!existingUser) {
+      await clerk.users.updateUser(id, { publicMetadata: { isAdmin: false } });
       await createOneUser({
         email: attributes.email_addresses[0].email_address,
         externalId: id,
@@ -31,6 +34,9 @@ export const clerkWebHookService = async (
       existingUser.email = attributes.email_addresses[0].email_address;
       existingUser.name = attributes.first_name + " " + attributes.last_name;
       existingUser.profileImage = attributes.profile_image_url;
+      existingUser.isAdmin = attributes.public_metadata.isAdmin
+        ? attributes.public_metadata.isAdmin
+        : false;
       await existingUser.save();
     }
   } catch (error: any) {
