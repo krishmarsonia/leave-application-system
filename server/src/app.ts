@@ -38,7 +38,7 @@ const whiteList = [
   "http://localhost:5000",
   "http://localhost:3000",
   "https://lmst3-krishmarsonias-projects.vercel.app",
-  "https://uine.ind.in/",
+  "https://uine.ind.in",
 ];
 
 // app.use(cors());
