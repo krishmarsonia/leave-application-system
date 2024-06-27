@@ -17,6 +17,7 @@ export const clerkWebHook = async (
 ) => {
   try {
     console.log(16, req.headers.referer, req.path);
+    console.log(20, req.headers);
     const payloadString = req.body;
     const svixHeaders = req.headers as unknown as WebhookRequiredHeaders;
     if (!payloadString || !svixHeaders) {
