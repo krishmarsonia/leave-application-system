@@ -14,7 +14,6 @@ export const clerkWebHookService = async (
     if (!payloadString || !svixHeaders) {
       throw new Error("parameters not passed");
     }
-    console.log(process.env.SIGNING_SECRET_NGROK!);
     const wh = new Webhook(process.env.SIGNING_SECRET_NGROK!);
     const evt = wh.verify(payloadString, svixHeaders) as any;
     const { id, ...attributes } = evt.data;

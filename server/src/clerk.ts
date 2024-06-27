@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
 import { createClerkClient } from "@clerk/clerk-sdk-node";
 
-export const clerk = createClerkClient({secretKey: "sk_test_XAwwGhIdhPRIVKGFxendT8jqNrOzGdnu9QC0Hu8WKl"});
+dotenv.config();
+
+export const clerk = createClerkClient({secretKey: process.env.CLERK_BACKEND_SECRET});
